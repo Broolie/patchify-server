@@ -1,0 +1,68 @@
+include "common.fbs";
+
+union Response {
+    AuthResponse,
+    FetchResponse,
+    FetchAllResponse,
+    NeedAuthResponse,
+    PullResponse,
+    StatusResponse,
+    VersionResponse
+}
+
+enum Status : uint8 {
+    Ok,
+    //...
+}
+
+enum PackageType: ubyte (bit_flags) {
+    Archive,
+    BinaryInstaller,
+    NativeInstaller
+}
+
+table Package {
+    uid: uint64;
+    name: string;
+    version: Version;
+    size: uint64;
+    available_types: PackageType;
+    dependencies: [Dependency];
+}
+
+table Dependency {
+    name: string;
+    version: Version;
+    size: uint64;
+}
+
+table AuthResponse {
+    token: [byte]; // May be missing in case of an error
+}
+
+table FetchResponse {
+    packages: [Package];
+}
+
+table FetchAllResponse {
+    packages: [Package];
+}
+
+table NeedAuthResponse {
+    auth_type: AuthType;
+}
+
+table PullResponse {}
+table StatusResponse {}
+
+table VersionResponse {
+    version: Version;
+}
+
+table CommonResponse {
+    common: Common;
+    status: Status = Ok;
+    response: Response ;
+}
+
+root_type CommonResponse;

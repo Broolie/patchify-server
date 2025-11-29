@@ -1,0 +1,23 @@
+table Version {
+    major: uint16;
+    minor: uint16;
+    patch: uint16;
+    build: string;
+}
+
+table PlatformInfo {
+    cpu_arch: string;
+    platform: string;
+    version: string;
+}
+
+enum AuthType : ubyte (bit_flags) {
+    NoAuth,
+    Password,
+    Login,
+    Token
+}
+
+struct Common {
+    api_version: uint8 = 0;
+}

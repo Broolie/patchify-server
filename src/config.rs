@@ -2,9 +2,30 @@ use std::{fs::File, io::BufReader, path::Path};
 
 use serde::Deserialize;
 
+use crate::common_generated::AuthType;
+
+//TODO: move somewhere else
+impl<'de> Deserialize<'de> for AuthType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let valid = &["noauth", "password", "login", "token"];
+        let value = String::deserialize(deserializer)?.to_lowercase();
+        match value.as_str() {
+            "noauth" => Ok(AuthType::NoAuth),
+            "password" => Ok(AuthType::Password),
+            "login" => Ok(AuthType::Login),
+            "token" => Ok(AuthType::Token),
+            _ => Err(serde::de::Error::unknown_variant(&value, valid)),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     pub bind_address: String,
+    pub available_auth_types: Vec<AuthType>, //TODO: implement bitflag deserialize, not vec jez
 }
 
 impl Config {
@@ -23,11 +44,10 @@ impl Config {
             let reader = BufReader::new(file);
             let mut deserializer = serde_json::Deserializer::from_reader(reader);
             match Config::deserialize(&mut deserializer) {
-                Ok(config) => return Ok(config),
-                Err(err) => return Err(err.to_string())
+                Ok(config) => Ok(config),
+                Err(err) => Err(err.to_string()),
             }
-        }
-        else {
+        } else {
             Err("unknown file format".to_owned())
         }
     }
@@ -35,6 +55,9 @@ impl Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Config { bind_address: "localhost:5114".to_owned() }
+        Config {
+            bind_address: "0.0.0.0:5114".to_owned(),
+            available_auth_types: Vec::new()
+        }
     }
 }
