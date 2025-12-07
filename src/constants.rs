@@ -1,1 +1,0 @@
-pub const API_VERSION: u8 = 1;

@@ -1,4 +1,6 @@
-include "common.fbs";
+include "../common.fbs";
+
+namespace v1;
 
 union Request {
     AuthRequest,
@@ -12,15 +14,15 @@ union Request {
 
 table AuthRequest {
     type: AuthType;
-    payload: [byte] ;
+    payload: [byte];
     login: string;
 }
 
 table FetchRequest {
     token: [byte];
     depth: uint32 = 1;
-    platform_info: PlatformInfo ;
-    package_name: string ;
+    platform_info: PlatformInfo;
+    package_name: string;
 }
 
 table FetchAllRequest {
@@ -38,9 +40,9 @@ table PullRequest {
 table StatusRequest {}
 table VersionRequest {}
 
-table CommonRequest {
-    common: Common ;
-    request: Request ;
+table RootRequest {
+    base: RequestBase;
+    request: Request;
 }
 
-root_type CommonRequest;
+root_type RootRequest;

@@ -1,3 +1,11 @@
+enum Status : uint8 {
+    Ok,
+    TooLong,
+    InvalidRequest,
+    SessionAlreadyExist,
+    //...
+}
+
 table Version {
     major: uint16;
     minor: uint16;
@@ -20,4 +28,13 @@ enum AuthType : ubyte (bit_flags) {
 
 struct Common {
     api_version: uint8 = 0;
+}
+
+table RequestBase {
+    common: Common (required);
+}
+
+table ResponseBase {
+    common: Common (required);
+    status: Status = Ok;
 }

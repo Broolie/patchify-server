@@ -25,9 +25,13 @@ impl SessionManager {
 
     pub fn create_session(&mut self, id: usize) -> Result<Arc<Session>> {
         if self.store.contains_key(&id) {
-            return Err(Errors::SessionAlreadyExist.into())
+            return Err(Errors::SessionAlreadyExist.into());
         }
 
-        Ok(self.store.entry(id).or_insert(Arc::new(Session::new())).clone())
+        Ok(self
+            .store
+            .entry(id)
+            .or_insert(Arc::new(Session::new()))
+            .clone())
     }
 }

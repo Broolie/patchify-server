@@ -1,11 +1,5 @@
-#[allow(unused)]
-#[allow(clippy::all)]
-#[allow(mismatched_lifetime_syntaxes)]
-#[path = "schemas/patchify/common_generated.rs"]
-mod common_generated;
-
-mod constants;
 mod errors;
+mod package_resolver;
 mod schemas;
 mod session_manager;
 
@@ -13,6 +7,7 @@ mod cli;
 mod config;
 mod request_handler;
 
+use schemas::*;
 use std::{net::SocketAddr, process::exit, str::FromStr, sync::Arc, thread::available_parallelism};
 
 use anyhow::Result;
@@ -26,7 +21,7 @@ use tracing::{error, info};
 use crate::{
     cli::Cli,
     config::Config,
-    request_handler::handle_request,
+    request_handler::handle_incoming_request,
     session_manager::{Session, SessionManager},
 };
 
@@ -136,7 +131,7 @@ async fn handle_connection(
             Ok(s) => s,
         };
 
-        let fut = handle_request(config.clone(), session.clone(), stream);
+        let fut = handle_incoming_request(config.clone(), session.clone(), stream);
         tokio::spawn(async move {
             if let Err(e) = fut.await {
                 error!("failed: {}", e.to_string());

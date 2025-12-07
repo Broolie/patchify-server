@@ -1,4 +1,6 @@
-include "common.fbs";
+include "../common.fbs";
+
+namespace v1;
 
 union Response {
     AuthResponse,
@@ -8,11 +10,6 @@ union Response {
     PullResponse,
     StatusResponse,
     VersionResponse
-}
-
-enum Status : uint8 {
-    Ok,
-    //...
 }
 
 enum PackageType: ubyte (bit_flags) {
@@ -59,10 +56,9 @@ table VersionResponse {
     version: Version;
 }
 
-table CommonResponse {
-    common: Common;
-    status: Status = Ok;
-    response: Response ;
+table RootResponse {
+    base: ResponseBase;
+    response: Response;
 }
 
-root_type CommonResponse;
+root_type RootResponse;

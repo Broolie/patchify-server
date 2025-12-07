@@ -2,7 +2,7 @@ use std::{fs::File, io::BufReader, path::Path};
 
 use serde::Deserialize;
 
-use crate::common_generated::AuthType;
+use crate::schemas::AuthType;
 
 //TODO: move somewhere else
 impl<'de> Deserialize<'de> for AuthType {
@@ -57,7 +57,7 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             bind_address: "0.0.0.0:5114".to_owned(),
-            available_auth_types: Vec::new()
+            available_auth_types: Vec::new(),
         }
     }
 }
